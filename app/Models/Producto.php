@@ -18,4 +18,9 @@ class Producto extends Model
         'cantidad',
         'estado'
     ];
+
+    //relacion muchos a muchos
+    public function categorias(){
+        return $this->belongsToMany('App\Models\Categoria');
+    }
 }

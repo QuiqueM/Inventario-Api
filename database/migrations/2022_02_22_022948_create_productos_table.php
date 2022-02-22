@@ -21,7 +21,6 @@ class CreateProductosTable extends Migration
             $table->float('precio');
             $table->integer('cantidad');
             $table->enum('estado', ['si', 'no']); //solo se acepta si o no
-            $table->integer('id_categoria');
             $table->softDeletes(); //activar la eliminacion logica
             $table->timestamps();
         });
