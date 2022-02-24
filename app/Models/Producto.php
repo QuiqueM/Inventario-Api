@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\softDeletes;
 
 class Producto extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'nombre',
@@ -34,6 +36,7 @@ class Producto extends Model
         return $this->hasOne('App\Models\Calificacion');
     }
 
+    //recuperamos los productos con sus categorias y su calificacion
     public function scopeProductos($query){
         return $query->with('categorias')->with('calificacion');
     }

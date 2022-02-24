@@ -20,7 +20,7 @@ class CreateCalificacionsTable extends Migration
             $table->integer('numero_calificaciones');
             $table->softDeletes(); //activar la eliminacion logica
             $table->timestamps();
-            $table->foreign('producto_id')->references('id')->on('productos')->onDelete('cascade');
+            $table->foreign('producto_id')->references('id')->on('productos');
         });
     }
 

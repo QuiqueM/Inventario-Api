@@ -19,8 +19,8 @@ class CreateCategoriaProductoTable extends Migration
             $table->unsignedBigInteger('producto_id');
             $table->softDeletes(); //activar la eliminacion logica
             $table->timestamps();
-            $table->foreign('categoria_id')->references('id')->on('categorias')->onDelete('cascade');
-            $table->foreign('producto_id')->references('id')->on('productos')->onDelete('cascade');
+            $table->foreign('categoria_id')->references('id')->on('categorias');
+            $table->foreign('producto_id')->references('id')->on('productos');
         });
     }
 
