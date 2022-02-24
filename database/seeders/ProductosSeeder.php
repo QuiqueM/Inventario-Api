@@ -16,7 +16,7 @@ class ProductosSeeder extends Seeder
      */
     public function run()
     { 
-        //creamos 200 productos
-        Producto::factory(200)->create();
+        //creamos 200 productos con un registro de calificacion
+        Producto::factory(200)->hasCalificacion(1)->create();
     }
 }

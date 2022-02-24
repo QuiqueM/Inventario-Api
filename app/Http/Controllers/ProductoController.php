@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use App\Models\Categoria;
+use App\Models\Calificacion;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -69,6 +70,19 @@ class ProductoController extends Controller
     public function destroy(Producto $producto)
     {
         $producto->delete();
+        return response()->json(["status" => 'ok']);
+    }
+
+    /**
+     * Actualiza la valoracion del producto
+     */
+    public function calificacion(Request $request)
+    {
+        $calificacion = Calificacion::where('producto_id','=',$request->producto_id)->first();
+        $calificacion->sumatoria_calificacion = ($calificacion->sumatoria_calificacion + $request->calificacion);
+        $calificacion->numero_calificaciones = $calificacion->numero_calificaciones + 1;
+        $calificacion->save(); 
+        
         return response()->json(["status" => 'ok']);
     }
 }

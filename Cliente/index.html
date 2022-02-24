@@ -148,6 +148,7 @@
                       label="Categorias"
                       multiple
                       solo
+                      :select="producto.categorias"
                     >
                   </v-select>
                   </v-col>
@@ -264,7 +265,7 @@
 
   <script>
 
-    let url = 'http://127.0.0.1:8000/api/productos';
+    let url = 'http://127.0.0.1:8000/api/productos/';
     new Vue({
       el: '#app',
       vuetify: new Vuetify(),
@@ -319,32 +320,27 @@
                 .then(response =>{
                   this.mostrar();
                 });
-                this.producto.sku="";
-                this.producto.nombre="";     
-                this.producto.descripcion="";
-                this.producto.precio= 0;
-                this.producto.cantidad= 0;
-                this.producto.estado= false;
-                this.producto.categorias = []
+                this.Limpiar()
             },                        
             editar: function(){
               let parametros = {
-                  sku: this.producto.sku, 
-                  nombre: this.producto.nombre,
-                  descripcion: this.producto.descripcion, 
-                  precio: this.producto.precio,
-                  cantidad: this.producto.cantidad,
-                  estado: this.producto.estado,
-                  categorias: this.producto.categorias, 
-                }                            
-            //console.log(parametros);                   
-                 axios.put(url+this.producto.id, parametros)                            
-                  .then(response => {                                
-                     this.mostrar();
-                  })                
-                  .catch(error => {
-                      console.log(error);            
-                  });
+                sku: this.producto.sku, 
+                nombre: this.producto.nombre,
+                descripcion: this.producto.descripcion, 
+                precio: this.producto.precio,
+                cantidad: this.producto.cantidad,
+                estado: this.producto.estado,
+                categorias: this.producto.categorias, 
+              }                            
+              //console.log(parametros);                   
+              axios.put(url+this.producto.id, parametros)                            
+              .then(response => {                                
+                this.mostrar();
+              })                
+              .catch(error => {
+                console.log(error);            
+              });
+              this.Limpiar();
             },
             borrar:function(id){
              Swal.fire({
@@ -384,7 +380,8 @@
               this.producto.cantidad = 0;
               this.producto.estado = false;
             },
-            formEditar:function(producto){ 
+            formEditar:function(producto){
+              this.Limpiar()
               //console.log(producto);
               //capturamos los datos del registro seleccionado y los mostramos en el formulario
               this.producto.id = producto.id;
@@ -393,7 +390,10 @@
               this.producto.descripcion = producto.descripcion;                            
               this.producto.precio = producto.precio;
               this.producto.cantidad = producto.cantidad;
-              this.producto.estado = producto.estado;                      
+              this.producto.estado = producto.estado;
+              for(cat of producto.categorias){
+                this.producto.categorias.push(cat.nombre)
+              }                      
               this.dialog=true;                            
               this.operacion='editar';
             },
@@ -408,12 +408,24 @@
               this.show=true;       
             },
             Calificar: function(){
-              console.log(this.rating, this.producto.id)
+              //console.log(this.rating, this.producto.id)
               axios.post(url, {producto_id:this.producto.id, calificacion: this.rating})
                 .then(response =>{
                   this.mostrar();
-                  this.calificar=false;
-                });
+              });
+              this.calificar=false
+              this.rating = 0
+              this.show=false
+              this.Limpiar()
+            },
+            Limpiar: function(){
+              this.producto.sku="";
+              this.producto.nombre="";     
+              this.producto.descripcion="";
+              this.producto.precio= 0;
+              this.producto.cantidad= 0;
+              this.producto.estado= false;
+              this.producto.categorias = []
             }
        }      
     });

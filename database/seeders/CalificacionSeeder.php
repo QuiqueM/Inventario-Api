@@ -14,12 +14,12 @@ class CalificacionSeeder extends Seeder
      */
     public function run()
     {
-        for ( $i=1;$i<=200; $i++){
+        /*for ( $i=1;$i<=200; $i++){
             DB::table('calificacions')->insert([
                 'producto_id' => $i,
                 'sumatoria_calificacion' => rand(1,5),
                 'numero_calificaciones' => 1
             ]);
-        }
+        }*/
     }
 }

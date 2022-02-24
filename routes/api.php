@@ -22,3 +22,6 @@ use App\Http\Controllers\ProductoController;
 
 //Genera las rutas necesarias para la api quitando las funciones de create y edit
 Route::apiResource('/productos', ProductoController::class);
+
+//Ruta para actualziar la valoracion del producto 
+Route::post('/productos/calificacion',[ ProductoController::class, 'calificacion']);
