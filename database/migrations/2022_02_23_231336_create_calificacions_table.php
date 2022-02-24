@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProductosTable extends Migration
+class CreateCalificacionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,13 @@ class CreateProductosTable extends Migration
      */
     public function up()
     {
-        Schema::create('productos', function (Blueprint $table) {
+        Schema::create('calificacions', function (Blueprint $table) {
             $table->id();
-            $table->string('sku')->unique();
-            $table->string('nombre');
-            $table->string('descripcion');
-            $table->float('precio');
-            $table->integer('cantidad');
-            $table->boolean('estado'); //true o false
+            $table->unsignedBigInteger('producto_id')->unique();
+            $table->float('sumatoria_calificacion');
+            $table->integer('numero_calificaciones');
             $table->softDeletes(); //activar la eliminacion logica
-            $table->timestamps();
+            $table->foreign('producto_id')->references('id')->on('productos')->onDelete('cascade');
         });
     }
 
@@ -33,6 +30,6 @@ class CreateProductosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('productos');
+        Schema::dropIfExists('calificaciones');
     }
 }

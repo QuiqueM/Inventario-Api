@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             CategoriaSeeder::class,
             ProductosSeeder::class,
             Categoria_ProductoSeeder::class,
+            CalificacionSeeder::class,
         ]);
     }
 }

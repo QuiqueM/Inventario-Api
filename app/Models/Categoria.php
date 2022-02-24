@@ -12,9 +12,14 @@ class Categoria extends Model
     protected $fillable = [
         'nombre'
     ];
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at' 
+    ];
 
     //relacion muchos a muchos 
     public function productos(){
-        return $this->belongsToMany('App\Models\Productos');
+        return $this->belongsToMany('App\Models\Producto');
     }
 }

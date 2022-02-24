@@ -13,14 +13,28 @@ class Producto extends Model
         'nombre',
         'descripcion',
         'sku',
-        'id_categoria',
         'precio',
         'cantidad',
         'estado'
     ];
 
+    protected $hidden = [
+        'deleted_at',
+        'created_at',
+        'updated_at'
+    ];
+
     //relacion muchos a muchos
     public function categorias(){
         return $this->belongsToMany('App\Models\Categoria');
+    }
+
+    //relacion uno a uno con calificacion
+    public function calificacion(){
+        return $this->hasOne('App\Models\Calificacion');
+    }
+
+    public function scopeProductos($query){
+        return $query->with('categorias')->with('calificacion');
     }
 }

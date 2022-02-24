@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controller\ProductoController;
+use App\Http\Controllers\ProductoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,5 +19,6 @@ use App\Http\Controller\ProductoController;
     return $request->user();
 });*/
 
+
 //Genera las rutas necesarias para la api quitando las funciones de create y edit
-Route::apiResource('productos', ProductoController::class);
+Route::apiResource('/productos', ProductoController::class);

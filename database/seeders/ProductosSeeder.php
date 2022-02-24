@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Producto;
 
 
+
 class ProductosSeeder extends Seeder
 {
     /**
@@ -15,6 +16,7 @@ class ProductosSeeder extends Seeder
      */
     public function run()
     { 
+        //creamos 200 productos
         Producto::factory(200)->create();
     }
 }

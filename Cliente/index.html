@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  
+   
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+  <style>
+  #app{
+      background-color:#CFD8DC;      
+  }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-main>   
+       <!-- Botón CREAR -->  
+       <v-flex class="text-center align-center">
+       <v-btn class="mx-2 mt-4"  fab dark color="#00B0FF" @click="formNuevo()"><v-icon dark>mdi-plus</v-icon></v-btn>           
+       </v-flex>              
+         
+        <v-card class="mx-auto mt-5" color="transparent" max-width="1280" elevation="8">                    
+          <v-row dense>    
+            <v-col
+              v-for="producto in productos" 
+              :key="producto.id"
+              cols="12"
+            >
+              <v-card
+                white
+              >
+                <div class="d-flex flex-no-wrap justify-space-between">
+                  <v-avatar
+                    class="ma-3"
+                    size="125"
+                    tile
+                  >
+                    <v-img src="https://cdn.vuetifyjs.com/images/cards/foster.jpg"></v-img>
+                  </v-avatar>
+                  <v-col>
+                    <v-card-title
+                      class="text-h5"
+                      v-text="producto.nombre"
+                    ></v-card-title>
+                    <v-card-subtitle class="gray--text" v-text="'SKU:'+ producto.sku" ></v-card-subtitle>
+                    <div v-for="cat in producto.categorias">
+                      <v-card-subtitle class="gray--text" v-text="cat.nombre" ></v-card-subtitle>
+                    </div>
+                    
+                    <v-rating
+                      color="warning"
+                      hover
+                      length="5"
+                      size="18"
+                      :value="producto.calificacion.sumatoria_calificacion / producto.calificacion.numero_calificaciones"
+                    ></v-rating>
+                    <v-card-subtitle v-if="producto.estado" class="green--text">In Stok: {{producto.cantidad}}</v-card-subtitle>
+                    <v-card-subtitle v-else  class="green--text">Out of Stok</v-card-subtitle>
+                  </v-col>
+                  <v-divider
+                      class=""
+                      vertical
+                    ></v-divider>
+                  <v-col>
+                    <p>
+                      <span v-text="'$'+producto.precio" class="blue--text"></span>
+                    </p>
+                    <p>
+                      <v-chip
+                      v-if="producto.estado"
+                      class="ma-2"
+                      color="green"
+                      text-color="white"
+                    >
+                      Disponible
+                    </v-chip>
+                    <v-chip
+                      v-else
+                      class="ma-2"
+                      color="red"
+                      text-color="white"
+                    >
+                      No Disponible
+                    </v-chip>
+                    </p>
+                    
+                    <v-btn
+                      color="error"
+                      outlined
+                      rounded
+                      small
+                    >
+                      Eliminar
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      outlined
+                      rounded
+                      small
+                      @click="formEditar(producto)"
+                    >
+                      Editar
+                    </v-btn>
+                    <v-btn
+                      color="success"
+                      outlined
+                      rounded
+                      small
+                      @click="ModalShow(producto)"
+                    >
+                      Detalles
+                    </v-btn>
+                  </v-col>
+    
+                  
+                </div>
+              </v-card>
+            </v-col>
+          </v-row>        
+        </v-card>        
+      <!-- Componente de Diálogo para CREAR y EDITAR -->
+      <v-dialog v-model="dialog" max-width="1000">        
+        <v-card>
+          <v-card-title class="blue darken-2 white--text">Nuevo Producto</v-card-title>    
+          <v-card-text>            
+            <v-form>             
+              <v-container>
+                <v-row>
+                  <input v-model="producto.id" hidden></input>
+                  <v-col cols="12">
+                    <v-text-field v-model="producto.sku" label="SKU" solo required>{{producto.sku}}</v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field v-model="producto.nombre" label="Nombre" solo required>{{producto.nombre}}</v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field v-model="producto.descripcion" label="Descripción" solo required>{{producto.descripcion}}</v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-select
+                      v-model="producto.categorias"
+                      :items="categorias"
+                      chips
+                      label="Categorias"
+                      multiple
+                      solo
+                    >
+                  </v-select>
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <v-text-field v-model="producto.precio" label="Precio" type="number" prefix="$" solo required>
+                      {{producto.precio}}
+                    </v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <v-text-field v-model="producto.cantidad" label="Cantidad" type="number" solo required>{{producto.cantidad}}</v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <v-switch
+                      v-model="producto.estado"
+                      label="En Stock ?"
+                    ></v-switch>
+                  </v-col>
+                </v-row>
+              </v-container>            
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn @click="dialog=false" color="blue-grey" dark>Cancelar</v-btn>
+            <v-btn @click="guardar()" type="submit" color="blue darken-2" dark>Guardar</v-btn>
+          </v-card-actions>
+          </v-form>
+        </v-card>
+      </v-dialog>
+      <!-- Componente de Diálogo para Detalles del producto -->
+      <v-dialog v-model="show" max-width="1000">        
+        <v-card>
+          <v-card-title class="blue darken-2 white--text">Detalle Producto</v-card-title>    
+          <v-card-text>                      
+            <v-container>
+              <v-row>
+                <v-col cols="5">
+                  <v-avatar
+                  class="ma-3"
+                  size="250"
+                  tile
+                  >
+                    <v-img src="https://cdn.vuetifyjs.com/images/cards/foster.jpg"></v-img>
+                  </v-avatar>
+                </v-col>
+                <v-col cols="7">
+                  <h3 v-text="producto.nombre"></h3>
+                  <p class="d-flex">
+                    <span v-text=" '$' + producto.precio"></span>
+                    <v-rating
+                      color="warning"
+                      
+                      length="5"
+                      size="10"
+                      :value=3
+                    ></v-rating>
+                  </p>
+                  <p v-if="producto.estado" class="green--text">Disponible-In Stock</p>
+                  <p v-else class="green--text">No Disponible-Out of Stock</p>
+                  <p v-text="producto.descripcion"></p>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                      color="success"
+                      outlined
+                      small
+                      @click="calificar=true"
+                    >
+                      Calificar
+                    </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>            
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn @click="show=false" color="blue-grey" dark>Cerrar</v-btn>
+          </v-card-actions>
+          
+        </v-card>
+      </v-dialog>
+
+      <!-- Componente de Diálogo para Calificar producto -->
+      <v-dialog v-model="calificar" max-width="800">        
+        <v-card>
+          <v-card-title class="blue darken-2 white--text">Calificar Producto</v-card-title>    
+          <v-card-text>                      
+            <v-container>
+              <v-row>
+                <v-col cols="12" class="d-flex justify-center">
+                  <v-rating
+                      color="warning"  
+                      length="5"
+                      size="32"
+                      v-model="rating"
+                    ></v-rating>
+                </v-col>
+              </v-row>
+            </v-container>            
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn @click="Calificar()" color="blue-grey" dark>Guardar</v-btn>
+          </v-card-actions>
+          
+        </v-card>
+      </v-dialog>
+      </v-main>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.5.7/vuetify.min.js" integrity="sha512-BPXn+V2iK/Zu6fOm3WiAdC1pv9uneSxCCFsJHg8Cs3PEq6BGRpWgXL+EkVylCnl8FpJNNNqvY+yTMQRi4JIfZA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+
+    let url = 'http://127.0.0.1:8000/api/productos';
+    new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+       data() {
+        return {            
+            productos: [],
+            dialog: false,
+            show: false,
+            operacion: '',
+            rating: 0,
+            calificar: false,            
+            producto:{
+                id: null,
+                sku:'',
+                nombre:'',
+                descripcion:'',
+                precio:0,
+                cantidad: 0,
+                estado: false,
+                categorias: []
+            },
+            categorias: []          
+        }
+       },
+       created(){               
+            this.mostrar()
+       },  
+       methods:{          
+            //MÉTODOS PARA EL CRUD
+            mostrar:function(){
+              axios.get(url)
+              .then(response =>{
+                this.productos = response.data.productos
+                for(cat of response.data.categorias){
+                  this.categorias.push(cat.nombre)
+                }
+                                  
+              })
+            },
+            crear:async function (){
+                let parametros = {
+                  sku: this.producto.sku, 
+                  nombre: this.producto.nombre,
+                  descripcion: this.producto.descripcion, 
+                  precio: this.producto.precio,
+                  cantidad: this.producto.cantidad,
+                  estado: this.producto.estado,
+                  categorias: this.producto.categorias, 
+                }
+                console.log(parametros);                               
+                axios.post(url, parametros)
+                .then(response =>{
+                  this.mostrar();
+                });
+                this.producto.sku="";
+                this.producto.nombre="";     
+                this.producto.descripcion="";
+                this.producto.precio= 0;
+                this.producto.cantidad= 0;
+                this.producto.estado= false;
+                this.producto.categorias = []
+            },                        
+            editar: function(){
+              let parametros = {
+                  sku: this.producto.sku, 
+                  nombre: this.producto.nombre,
+                  descripcion: this.producto.descripcion, 
+                  precio: this.producto.precio,
+                  cantidad: this.producto.cantidad,
+                  estado: this.producto.estado,
+                  categorias: this.producto.categorias, 
+                }                            
+            //console.log(parametros);                   
+                 axios.put(url+this.producto.id, parametros)                            
+                  .then(response => {                                
+                     this.mostrar();
+                  })                
+                  .catch(error => {
+                      console.log(error);            
+                  });
+            },
+            borrar:function(id){
+             Swal.fire({
+                title: '¿Confirma eliminar el registro?',   
+                confirmButtonText: `Confirmar`,                  
+                showCancelButton: true,                          
+              }).then((result) => {                
+                if (result.isConfirmed) {      
+                      //procedimiento borrar
+                      axios.delete(url+id)
+                      .then(response =>{           
+                          this.mostrar();
+                       });      
+                      Swal.fire('¡Eliminado!', '', 'success')
+                } else if (result.isDenied) {                  
+                }
+              });              
+            },
+
+            //Botones y formularios
+            guardar:function(){
+              if(this.operacion=='crear'){
+                this.crear();                
+              }
+              if(this.operacion=='editar'){ 
+                this.editar();                           
+              }
+              this.dialog=false;                        
+            }, 
+            formNuevo:function () {
+              this.dialog=true;
+              this.operacion='crear';
+              this.producto.nombre = '';
+              this.producto.sku ='';
+              this.producto.descripcion = '';                            
+              this.producto.precio = 0;
+              this.producto.cantidad = 0;
+              this.producto.estado = false;
+            },
+            formEditar:function(producto){ 
+              //console.log(producto);
+              //capturamos los datos del registro seleccionado y los mostramos en el formulario
+              this.producto.id = producto.id;
+              this.producto.nombre = producto.nombre;
+              this.producto.sku = producto.sku;
+              this.producto.descripcion = producto.descripcion;                            
+              this.producto.precio = producto.precio;
+              this.producto.cantidad = producto.cantidad;
+              this.producto.estado = producto.estado;                      
+              this.dialog=true;                            
+              this.operacion='editar';
+            },
+            ModalShow:function(producto){
+              this.producto.id = producto.id;
+              this.producto.nombre = producto.nombre;
+              this.producto.sku = producto.sku;
+              this.producto.descripcion = producto.descripcion;                            
+              this.producto.precio = producto.precio;
+              this.producto.cantidad = producto.cantidad;
+              this.producto.estado = producto.estado;                      
+              this.show=true;       
+            },
+            Calificar: function(){
+              console.log(this.rating, this.producto.id)
+              axios.post(url, {producto_id:this.producto.id, calificacion: this.rating})
+                .then(response =>{
+                  this.mostrar();
+                  this.calificar=false;
+                });
+            }
+       }      
+    });
+  </script>
+</body>
+</html> 
