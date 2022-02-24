@@ -202,7 +202,7 @@
                       
                       length="5"
                       size="10"
-                      :value=3
+                      :value="producto.calificacion"
                     ></v-rating>
                   </p>
                   <p v-if="producto.estado" class="green--text">Disponible-In Stock</p>
@@ -285,7 +285,8 @@
                 precio:0,
                 cantidad: 0,
                 estado: false,
-                categorias: []
+                categorias: [],
+                calificacion: 0
             },
             categorias: []          
         }
@@ -404,7 +405,8 @@
               this.producto.descripcion = producto.descripcion;                            
               this.producto.precio = producto.precio;
               this.producto.cantidad = producto.cantidad;
-              this.producto.estado = producto.estado;                      
+              this.producto.estado = producto.estado;
+              this.producto.calificacion = (producto.calificacion.sumatoria_calificacion / producto.calificacion.numero_calificaciones);                      
               this.show=true;       
             },
             Calificar: function(){
